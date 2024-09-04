@@ -34,7 +34,7 @@ export const User = InnativeDB.define('user', {
   role: {
     type: DataTypes.ENUM,
     values: ['admin', 'client'],
-    allowNull: true,
+    allowNull: false,
     defaultValue: 'client'
   },
   avatar: {

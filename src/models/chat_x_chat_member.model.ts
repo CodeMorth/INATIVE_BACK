@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
-import { Chat_Member } from './chat_member.model'
-import { Chat } from './chat.model'
+import { ChatMember,Chat } from './'
 
 export const ChatXChatMember = InnativeDB.define('chat_x_chat_member', {
     id_chat_x_chat_member: {
@@ -12,7 +11,7 @@ export const ChatXChatMember = InnativeDB.define('chat_x_chat_member', {
   id_chat_member: {
     type: DataTypes.INTEGER,
     references: {
-      model: Chat_Member,
+      model: ChatMember,
       key: 'id_chat_member'
     }
   },

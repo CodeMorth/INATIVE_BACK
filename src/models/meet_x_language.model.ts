@@ -1,10 +1,9 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
-import { Language } from './language.model'
-import { Meet } from './meet.model'
+import { Language, Meet } from './'
 
 export const MeetXLanguage = InnativeDB.define('meet_x_language', {
-    user_x_language: {
+  user_x_language: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true

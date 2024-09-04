@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
 
-export const Chat_Member = InnativeDB.define('chatMember', {
+export const ChatMember = InnativeDB.define('chatMember', {
     id_chat_member: {
     type: DataTypes.INTEGER,
     autoIncrement: true,

@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express"
 import cors from "cors"
 import morgan from "morgan"
-import { apiRoutes } from "./routes"
+import { apiRoutes } from "./routes/routeManager"
 
 export const app = express()
 

@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
-import { Meet } from './meet.model'
-import { Gender } from './gender.model'
+import { Meet,Gender } from './'
 
 export const GenderXMeet = InnativeDB.define('gender_x_meet', {
     id_gender_x_meet: {

@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
-import { EnglishLevel } from './english_level.model'
-import { Meet } from './meet.model'
+import { EnglishLevel,Meet } from './'
 
 export const EnglishlevelXMett = InnativeDB.define('english_level_x_meet', {
     id_english_level_x_meet: {
