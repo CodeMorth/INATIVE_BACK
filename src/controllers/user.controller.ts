@@ -22,13 +22,9 @@ export const updateUserService = async (
 ) => {
   const { id_user } = req.params
 
-  console.log(" req.file", req.file)
-  console.log(" req.files", req.files)
-
-  console.log(" req.body", req.body)
-
+//enves de enviar req.file es enviar req.files
   try {
-    const responseUpdate =  await updateUsers(id_user, req.body, req.file)
+    const responseUpdate =  await updateUsers(id_user, req.body, req.files)
 
     res.status(201).json(responseUpdate)
   } catch (error) {

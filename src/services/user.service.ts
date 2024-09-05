@@ -22,7 +22,8 @@ export const registerUsersService = async (userData: RegisterUsersType) => {
 export const updateUsers = async (
   userId: string,
   userData: UpdateUserType,
-  file?: Express.Multer.File
+  //error de tipado
+  file: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined
 ) => {
   if (!userId) {
     throw new Error(
@@ -30,7 +31,7 @@ export const updateUsers = async (
     )
   }
 
-  console.log("Soy el file",file)
+
 
   // Si se proporciona un archivo, subirlo a Cloudinary
   const avatarMoment = await uploadAvatars(file)
