@@ -2,6 +2,7 @@ import {
   RegisterUsersType,
   UpdateUserType,
 } from '../interface'
+import { MulterFile, MulterFiles } from '../interface/upload_interface'
 import { User } from '../models'
 import { uploadAvatars } from '../utils/uploadAvatars'
 
@@ -23,7 +24,7 @@ export const updateUsers = async (
   userId: string,
   userData: UpdateUserType,
   //error de tipado
-  file: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[] | undefined
+  file:  MulterFiles | MulterFile[] | undefined
 ) => {
   if (!userId) {
     throw new Error(
@@ -36,13 +37,8 @@ export const updateUsers = async (
   // Si se proporciona un archivo, subirlo a Cloudinary
   const avatarMoment = await uploadAvatars(file)
 
-  console.log('avatarMoment', avatarMoment)
-
-  console.log('Soy el userData antes de ser tocado 🥵🥵🥵', userData)
-
   Object.assign(userData, avatarMoment)
 
-  console.log('He sido tocado 🥵🥵🥵🥵🥵🥵🥵🥵🥵', userData)
 
   // Actualizar el usuario en la base de datos
   const [userDataRows] = await User.update(userData, {
