@@ -39,7 +39,6 @@ export const updateUsers = async (
 
   Object.assign(userData, avatarMoment)
 
-
   // Actualizar el usuario en la base de datos
   const [userDataRows] = await User.update(userData, {
     where: { id_user: userId },
