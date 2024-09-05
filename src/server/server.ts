@@ -1,6 +1,9 @@
 import { app } from '../app'
 import InnativeDB from '../config/database'
 import { initModels } from '../models'
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 initModels()
 

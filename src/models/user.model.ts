@@ -7,7 +7,7 @@ export const User = InnativeDB.define('user', {
     autoIncrement: true,
     primaryKey: true
   },
-  userName: {
+  user_name: {
     type: DataTypes.STRING,
     allowNull: false
   },
