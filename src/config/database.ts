@@ -15,7 +15,10 @@ const { DB_DATABASE, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT } =
     {
       host: DB_HOST,
       port: parseInt(DB_PORT, 10), // Convierte el puerto a número
-      dialect: 'mysql'
+      dialect: 'mysql',
+      logging:false,
+      dialectOptions:{ssl:{require:true,rejectUnauthorized:false}}
+
     }
   )
   
