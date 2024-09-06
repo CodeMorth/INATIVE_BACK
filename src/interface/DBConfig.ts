@@ -3,5 +3,5 @@ export interface DBConfig {
     DB_USERNAME: string;
     DB_PASSWORD: string;
     DB_HOST: string;
-    DB_PORT: number; // El puerto debe ser un número
+    DB_PORT: any ; // El puerto debe ser un número
   }
