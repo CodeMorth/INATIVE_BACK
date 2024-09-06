@@ -1,13 +1,11 @@
-import { MulterFile } from "../interface/upload_interface";
-const cloudinary = require('../utils/cloudynari')
+import { MulterFile, MulterFiles } from '../interface/upload_interface';
+import { CloudinaryResponsesType } from '../interface/cloudinaryResponseInterface';
+import cloudinary from './cloudynari';
 
+export const uploadAvatars = async (files: any ): Promise<CloudinaryResponsesType> => {
+  try {
+    const cloudinaryResponses: CloudinaryResponsesType = {};
 
-export const uploadAvatars = async (files:any)  => {
-
-  console.log("Estoy en uploadAvatars y soy el files ",files)
-
-    try {
-        const cloudinaryResponses: any = {};
     if (files) {
       for (const [fieldname, fileArray] of Object.entries(files)) {
         for (const file of fileArray as MulterFile[]) {
@@ -17,10 +15,8 @@ export const uploadAvatars = async (files:any)  => {
       }
     }
 
-    console.log("Soy el return cloudinaryResponses",cloudinaryResponses)
-
     return cloudinaryResponses;
-    } catch (error) {
-        throw new Error((error as Error).message)
-    }
-}
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+};

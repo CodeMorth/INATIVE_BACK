@@ -14,6 +14,7 @@ declare namespace NodeJS {
       JWT_SECRET: string
       JWT_ALGORITHMS: string
       JWT_EXPIRESIN: string
+      
     }
   }
   
