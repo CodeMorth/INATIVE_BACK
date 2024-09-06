@@ -21,7 +21,7 @@ export const registerUsersService = async (userData: RegisterUsersType) => {
     dt_birthdate: dt_birthdate
   })
 
-  await sendMail(email, `Bienvenido a Dev-Friend`, user_name)
+  await sendMail(email, `Bienvenido a Inative`, user_name)
 
   return user
 }

@@ -1,7 +1,5 @@
 import transporter from "./mailer";
 
-const loggo =
-  "https://res.cloudinary.com/dt40q4sna/image/upload/v1719793540/logo_lsoshl.png"; // Ruta relativa a la imagen, asegúrate de que sea accesible
 
 export const sendMail = (email: any, subject: any, username: any) => {
   transporter.sendMail({
