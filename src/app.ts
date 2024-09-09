@@ -9,6 +9,8 @@ app.use(express.json())
 
 app.use(cors())
 app.use(morgan("tiny"))
+app.use(express.urlencoded({ extended: false }));
+
 
 apiRoutes(app)
 

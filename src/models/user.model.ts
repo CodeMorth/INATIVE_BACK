@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
+import { Gender } from './gender.model'
 
 export const User = InnativeDB.define('user', {
   id_user: {
@@ -37,8 +38,16 @@ export const User = InnativeDB.define('user', {
     allowNull: false,
     defaultValue: 'client'
   },
+  id_gender: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: Gender,
+      key: 'id_gender'
+    }
+  },
   avatar: {
     type: DataTypes.STRING,
     allowNull: true
-  },
+  }
 })

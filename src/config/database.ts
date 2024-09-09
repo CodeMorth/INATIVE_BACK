@@ -21,6 +21,3 @@ const InnativeDB = new Sequelize(
 )
 
 export default InnativeDB
-
-    // logging:false,
-    // dialectOptions:{ssl:{require:true,rejectUnauthorized:false}}
