@@ -1,5 +1,5 @@
-import { MulterFile, MulterFiles } from '../interface/upload_interface';
-import { CloudinaryResponsesType } from '../interface/cloudinaryResponseInterface';
+import { MulterFile, MulterFiles } from '../interface/variety/upload_interface';
+import { CloudinaryResponsesType } from '../interface/variety/cloudinaryResponseInterface';
 import cloudinary from './cloudynari';
 
 export const uploadAvatars = async (files: any ): Promise<CloudinaryResponsesType> => {

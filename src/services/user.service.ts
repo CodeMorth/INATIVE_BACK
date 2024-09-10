@@ -1,6 +1,11 @@
-import { LoginUserType, RegisterUsersType, UpdateUserType } from '../interface'
-import { MulterFile, MulterFiles } from '../interface/upload_interface'
+import {
+  LoginUserType,
+  RegisterUsersType,
+  UpdateUserType
+} from '../interface/variety'
+import { MulterFile, MulterFiles } from '../interface/variety/upload_interface'
 import { User } from '../models'
+import { ErrorOwn } from '../utils/ErrorOwn'
 import { sendMail } from '../utils/sendMailer'
 import { uploadAvatars } from '../utils/uploadAvatars'
 import bcrypt from 'bcrypt'
@@ -9,78 +14,61 @@ import jwt, { Algorithm } from 'jsonwebtoken'
 export const registerUsersService = async (userData: RegisterUsersType) => {
   const { user_name, full_name, email, password, dt_birthdate } = userData
 
-  console.log('user data del servicio de registrer', userData)
+  if (!user_name || !full_name || !email || !password || !dt_birthdate)
+    throw ErrorOwn('Faltan datos')
 
-  const hashedPassword = await bcrypt.hash(password, 10)
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10)
 
-  const user = await User.create({
-    user_name: user_name,
-    full_name: full_name,
-    email: email,
-    password: hashedPassword,
-    dt_birthdate: dt_birthdate
-  })
+    await User.create({
+      user_name: user_name,
+      full_name: full_name,
+      email: email,
+      password: hashedPassword,
+      dt_birthdate: dt_birthdate
+    })
 
-  await sendMail(email, `Bienvenido a Inative`, user_name)
+    await sendMail(email, `Bienvenido a Inative`, user_name)
 
-  return user
+    return { message: 'Usuario creado correctamente' }
+  } catch (error) {
+    throw ErrorOwn('No se pudo crear el usuario')
+  }
 }
 
 export const loginUserService = async (userData: LoginUserType) => {
   const { email, password } = userData
 
-  const user: any = await User.findOne({ where: { email } })
+  if (!email || !password) throw ErrorOwn('Faltan datos')
 
-  if (!user) {
-    throw new Error(
-      'Invalid credentials: incorrect email/password or confirm email'
+  try {
+    const user: any = await User.findOne({ where: { email: email } })
+
+    const validPassword = await bcrypt.compare(password, user.password)
+
+    if (!validPassword || !user) throw ErrorOwn('Correo/Contraseña incorrecta', 401)
+
+    const { JWT_SECRET, JWT_ALGORITHMS, JWT_EXPIRESIN } = process.env
+
+    const userToken = user.toJSON()
+
+    delete userToken.password
+
+    const token = jwt.sign(
+      {
+        userToken
+      },
+      JWT_SECRET!,
+      {
+        algorithm: JWT_ALGORITHMS as Algorithm,
+        expiresIn: JWT_EXPIRESIN,
+        noTimestamp: true
+      }
     )
-  }
 
-  const validPassword = await bcrypt.compare(password, user.password)
-
-  if (!validPassword) {
-    throw new Error('Invalid credentials: incorrect email/password')
-  }
-
-  const {
-    id_user,
-    user_name,
-    full_name,
-    last_login,
-    dt_birthdate,
-    role,
-    avatar,
-    createdAt,
-    updatedAt,
-    id_gender
-  } = user
-
-  const { JWT_SECRET, JWT_ALGORITHMS, JWT_EXPIRESIN } = process.env
-
-  const token = jwt.sign(
-    {
-      id_user,
-      user_name,
-      full_name,
-      last_login,
-      dt_birthdate,
-      role,
-      avatar,
-      createdAt,
-      updatedAt,
-      id_gender
-    },
-    JWT_SECRET!,
-    {
-      algorithm: JWT_ALGORITHMS as Algorithm,
-      expiresIn: JWT_EXPIRESIN,
-      noTimestamp: true
-    }
-  )
-
-  return {
-    token
+    return { token: token }
+  } catch (error) {
+    throw ErrorOwn('No se pudo logear de manera correcta')
   }
 }
 
@@ -89,46 +77,51 @@ export const updateUserService = async (
   userData: UpdateUserType,
   files: MulterFiles | MulterFile[] | undefined
 ) => {
-  if (!userId) {
-    throw new Error(
-      'Invalid credentials: incorrect email/password or confirm email'
-    )
+  if (!userId) throw ErrorOwn('Falta el id del usuario')
+
+  try {
+    // Si se proporciona un archivo, subirlo a Cloudinary
+    const avatarMoment = await uploadAvatars(files)
+
+    // Actualizar los datos del usuario
+    Object.assign(userData, avatarMoment)
+
+    // Actualizar el usuario en la base de datos
+    const [updatedCount] = await User.update(userData, {
+      where: { id_user: userId }
+    })
+
+    if (updatedCount === 0) {
+      throw ErrorOwn('No se encontró un dato para actualizar')
+    }
+
+    // Devolver el mensaje de éxito
+    return { message: 'Usuario actualizado correctamente' }
+  } catch (error) {
+    // Manejo de errores
+    throw ErrorOwn('No se pudo actualizar el usuario de manera correcta')
   }
-
-  // Si se proporciona un archivo, subirlo a Cloudinary
-  const avatarMoment = await uploadAvatars(files)
-
-  Object.assign(userData, avatarMoment)
-
-  // Actualizar el usuario en la base de datos
-  const [userDataRows] = await User.update(userData, {
-    where: { id_user: userId },
-    returning: true
-  })
-
-  if (userDataRows === 0) {
-    throw new Error('No se encontro un dato para actualizar')
-  }
-
-  // Devolver el usuario actualizado
-  return { message: 'Usuario actualizado correctamente' } // Retorna el primer usuario actualizado
 }
 
 export const getUsersService = async (idUser: string) => {
+  if (!idUser) throw ErrorOwn('Falta el id del usuario')
+
   try {
     const user = await User.findByPk(idUser)
 
     if (!user) {
-      throw new Error('Usuario no encontrado')
+      throw ErrorOwn('Usuario no encontrado')
     }
 
     return user
   } catch (error) {
-    throw new Error(`Error al buscar el usuario: ${(error as Error).message}`)
+    throw ErrorOwn(`Error al buscar el usuario`)
   }
 }
 
 export const deleteUsersService = async (idUser: string) => {
+  if (!idUser) throw ErrorOwn('Falta el id del usuario')
+
   try {
     const deletedRows = await User.destroy({
       where: {
@@ -137,22 +130,22 @@ export const deleteUsersService = async (idUser: string) => {
     })
 
     if (deletedRows === 0) {
-      throw new Error('Usuario no encontrado')
+      throw ErrorOwn('Usuario no encontrado')
     }
 
     return { message: 'Usuario eliminado correctamente' }
   } catch (error) {
-    throw new Error(`Error al eliminar el usuario: ${(error as Error).message}`)
+    throw ErrorOwn('Error al eliminar el usuario')
   }
 }
 
 export const getDataTokenService = (token: string) => {
+  if (!token) throw ErrorOwn('Falta el token')
+
   try {
     const { JWT_SECRET, JWT_ALGORITHMS } = process.env
     if (!JWT_SECRET || !JWT_ALGORITHMS) {
-      throw new Error(
-        'JWT_SECRET or JWT_ALGORITHMS is not defined in environment variables.'
-      )
+      throw ErrorOwn('JWT_SECRET o JWT_ALGORITHMS no estan definidas')
     }
 
     const dataDecoded: any = jwt.verify(token, JWT_SECRET, {
@@ -163,6 +156,6 @@ export const getDataTokenService = (token: string) => {
 
     return dataDecoded
   } catch (error) {
-    throw new Error('Invalid token or expired token.')
+    throw ErrorOwn('Token invalido o expirado')
   }
 }

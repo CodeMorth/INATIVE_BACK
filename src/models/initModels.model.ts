@@ -1,15 +1,11 @@
 import {
   Chat,
   EnglishLevel,
-  EnglishlevelXMett,
   EnglishlevelXUser,
   Friend,
   Gender,
   GenderXChat,
-  GenderXMeet,
   Language,
-  Meet,
-  MeetXLanguage,
   Message,
   MessageXChat,
   Objective,
@@ -17,15 +13,10 @@ import {
   UserXChat,
   UserXFriend,
   UserxLanguage,
-  UserXMeet,
   UserXObjective
 } from '.'
 
 export const initModels = () => {
-  // User and Meet association through user_x_meet
-  User.belongsToMany(Meet, { through: UserXMeet, foreignKey: 'id_user' })
-  Meet.belongsToMany(User, { through: UserXMeet, foreignKey: 'id_meet' })
-
   // User and Friend association through user_x_friend
   User.belongsToMany(Friend, { through: UserXFriend, foreignKey: 'id_user' })
   Friend.belongsToMany(User, { through: UserXFriend, foreignKey: 'id_friend' })
@@ -54,16 +45,6 @@ export const initModels = () => {
   User.belongsToMany(Chat, { through: UserXChat, foreignKey: 'id_user' })
   Chat.belongsToMany(User, { through: UserXChat, foreignKey: 'id_chat' })
 
-  // Meet and Language association through meet_x_language
-  Meet.belongsToMany(Language, {
-    through: MeetXLanguage,
-    foreignKey: 'id_meet'
-  })
-  Language.belongsToMany(Meet, {
-    through: MeetXLanguage,
-    foreignKey: 'id_language'
-  })
-
   // EnglishLevel and User association through english_level_x_user
   EnglishLevel.belongsToMany(User, {
     through: EnglishlevelXUser,
@@ -73,20 +54,6 @@ export const initModels = () => {
     through: EnglishlevelXUser,
     foreignKey: 'id_user'
   })
-
-  // EnglishLevel and Meet association through english_level_x_meet
-  EnglishLevel.belongsToMany(Meet, {
-    through: EnglishlevelXMett,
-    foreignKey: 'id_english_level'
-  })
-  Meet.belongsToMany(EnglishLevel, {
-    through: EnglishlevelXMett,
-    foreignKey: 'id_meet'
-  })
-
-  // Gender and Meet association through gender_x_meet
-  Gender.belongsToMany(Meet, { through: GenderXMeet, foreignKey: 'id_gender' })
-  Meet.belongsToMany(Gender, { through: GenderXMeet, foreignKey: 'id_meet' })
 
   // Gender and User association through gender_x_user
   User.belongsTo(Gender, { foreignKey: 'id_gender' })

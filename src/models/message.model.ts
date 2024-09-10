@@ -1,8 +1,9 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
 import { User } from './user.model'
+import { MessageType } from '../interface/models'
 
-export const Message = InnativeDB.define('message', {
+export const Message = InnativeDB.define<MessageType>('message', {
   id_message: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -19,10 +20,6 @@ export const Message = InnativeDB.define('message', {
       model: User,
       key: 'id_user'
     }
-  },
-  id_reciever_message: {
-    type: DataTypes.INTEGER,
-    allowNull: false
   },
   message_status: {
     type: DataTypes.ENUM,

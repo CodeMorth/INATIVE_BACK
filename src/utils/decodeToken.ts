@@ -1,13 +1,15 @@
-const dotenv = require('dotenv')
-dotenv.config()
+import { ErrorOwn } from './ErrorOwn'
+import dotenv from 'dotenv'
 const jwt = require('jsonwebtoken')
+
+dotenv.config()
 
 export const decodeToken = async (token: string) => {
   const { JWT_SECRET, JWT_ALGORITHMS } = process.env
 
   try {
     if (!token) {
-      return { message: 'Token is missing' }
+      throw ErrorOwn('No existe token', 401)
     }
 
     const decoded = jwt.verify(token, JWT_SECRET as string, {
@@ -15,6 +17,6 @@ export const decodeToken = async (token: string) => {
     })
     return decoded.data
   } catch (error) {
-    throw new Error((error as Error).message)
+    throw ErrorOwn('Hubo un error al decodificar el token', 498)
   }
 }

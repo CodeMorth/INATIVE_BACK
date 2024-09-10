@@ -1,4 +1,4 @@
-import express, {Request, Response} from "express"
+import express, {NextFunction, Request, Response} from "express"
 import cors from "cors"
 import morgan from "morgan"
 import { apiRoutes } from "./routes/routeManager"
@@ -17,3 +17,7 @@ apiRoutes(app)
 app.get("/",(req:Request,res:Response)=>{
     res.send("Me corri correctamente 🥵🥵🥵🥵")
 })
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    res.status(err.status || 500).json({ message: err.message });
+  });

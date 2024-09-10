@@ -14,11 +14,10 @@ export const registerUserController = async (
   next: NextFunction
 ) => {
   try {
-    console.log('controller req.body', req.body)
 
-    await registerUsersService(req.body)
+    const response =  await registerUsersService(req.body)
 
-    res.status(201).json()
+    res.status(201).json(response)
   } catch (error) {
     next(error)
   }
@@ -30,11 +29,12 @@ export const loginUserController = async (
   next: NextFunction
 ) => {
   try {
-    const responseUpdate = await loginUserService(req.body)
+    const response = await loginUserService(req.body)
 
-    res.status(201).json(responseUpdate)
+    res.status(201).json(response)
   } catch (error) {
     next(error)
+
   }
 }
 
@@ -45,19 +45,10 @@ export const updateUserController = async (
 ) => {
   const { id_user } = req.params
 
-  console.log('id_user', id_user)  
-
-  console.log('req.body', req.body)
-
-  console.log('req.header', req.header)
-
-
-  console.log('req.files', req.files)
-
   try {
-    const responseUpdate = await updateUserService(id_user, req.body, req.files)
+    const response = await updateUserService(id_user, req.body, req.files)
 
-    res.status(201).json(responseUpdate)
+    res.status(201).json(response)
   } catch (error) {
     next(error)
   }
@@ -101,8 +92,6 @@ export const getUserByTokenController = async (
   next: NextFunction
 ) => {
   const { token } = req.params
-
-  console.log('token', token)
 
   try {
     const response = await getDataTokenService(token)
