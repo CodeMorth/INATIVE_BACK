@@ -1,16 +1,16 @@
 import InnativeDB from '../config/database'
-import { ChatData } from '../interface/models/Chat.interface'
+import { ChatDataType } from '../interface/models/Chat.interface'
 import { Chat, UserXChat } from '../models'
 import { ErrorOwn } from '../utils/ErrorOwn'
 
-export const createChatService = async (chatData: ChatData) => {
+export const createChatService = async (chatData: ChatDataType) => {
   const transaction = await InnativeDB.transaction()
   const { id_user_1, id_user_2 } = chatData
 
-  try {
-    // Validar la entrada
-    if (!id_user_1 || !id_user_2) throw ErrorOwn('Faltan datos')
+  // Validar la entrada
+  if (!id_user_1 || !id_user_2) throw ErrorOwn('Faltan datos')
 
+  try {
     // Crear el nuevo chat
     const newChat = await Chat.create({}, { transaction })
 
@@ -39,6 +39,5 @@ export const createChatService = async (chatData: ChatData) => {
     // Revertir la transacción en caso de error
     await transaction.rollback()
     throw ErrorOwn('Hubo un problema en la creacion del chat')
-
   }
 }

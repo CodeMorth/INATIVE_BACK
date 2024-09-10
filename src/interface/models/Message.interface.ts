@@ -1,7 +1,7 @@
 import { Model, Optional } from 'sequelize'
 
 // Define la interfaz de atributos del modelo
-export interface MessageAttributes {
+export interface MessageAttributesType {
   id_message: number
   message: string
   id_sender_message: number
@@ -9,15 +9,15 @@ export interface MessageAttributes {
 }
 
 // Define un tipo que permita omitir atributos opcionales en la creación
-export type MessageCreationAttributes = Optional<
-  MessageAttributes,
+export type MessageCreationAttributesType = Optional<
+  MessageAttributesType,
   'id_message' | 'message_status'
 >
 
 // Define el modelo MessageType
 export class MessageType
-  extends Model<MessageAttributes, MessageCreationAttributes>
-  implements MessageAttributes
+  extends Model<MessageAttributesType, MessageCreationAttributesType>
+  implements MessageAttributesType
 {
   id_message!: number
   message!: string

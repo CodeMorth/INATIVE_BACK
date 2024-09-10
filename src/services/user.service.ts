@@ -5,11 +5,11 @@ import {
 } from '../interface/variety'
 import { MulterFile, MulterFiles } from '../interface/variety/upload_interface'
 import { User } from '../models'
-import { ErrorOwn } from '../utils/ErrorOwn'
-import { sendMail } from '../utils/sendMailer'
-import { uploadAvatars } from '../utils/uploadAvatars'
 import bcrypt from 'bcrypt'
 import jwt, { Algorithm } from 'jsonwebtoken'
+import { ErrorOwn, sendMail, uploadAvatars } from '../utils'
+
+const { JWT_SECRET, JWT_ALGORITHMS, JWT_EXPIRESIN } = process.env
 
 export const registerUsersService = async (userData: RegisterUsersType) => {
   const { user_name, full_name, email, password, dt_birthdate } = userData
@@ -46,11 +46,11 @@ export const loginUserService = async (userData: LoginUserType) => {
 
     const validPassword = await bcrypt.compare(password, user.password)
 
-    if (!validPassword || !user) throw ErrorOwn('Correo/Contraseña incorrecta', 401)
+    if (!validPassword || !user) throw ErrorOwn()
 
-    const { JWT_SECRET, JWT_ALGORITHMS, JWT_EXPIRESIN } = process.env
+      console.log("user",user)
 
-    const userToken = user.toJSON()
+    const userToken = user.dataValues
 
     delete userToken.password
 
@@ -92,7 +92,7 @@ export const updateUserService = async (
     })
 
     if (updatedCount === 0) {
-      throw ErrorOwn('No se encontró un dato para actualizar')
+      throw ErrorOwn()
     }
 
     // Devolver el mensaje de éxito
@@ -110,7 +110,7 @@ export const getUsersService = async (idUser: string) => {
     const user = await User.findByPk(idUser)
 
     if (!user) {
-      throw ErrorOwn('Usuario no encontrado')
+      throw ErrorOwn()
     }
 
     return user
@@ -130,7 +130,7 @@ export const deleteUsersService = async (idUser: string) => {
     })
 
     if (deletedRows === 0) {
-      throw ErrorOwn('Usuario no encontrado')
+      throw ErrorOwn()
     }
 
     return { message: 'Usuario eliminado correctamente' }
@@ -143,7 +143,6 @@ export const getDataTokenService = (token: string) => {
   if (!token) throw ErrorOwn('Falta el token')
 
   try {
-    const { JWT_SECRET, JWT_ALGORITHMS } = process.env
     if (!JWT_SECRET || !JWT_ALGORITHMS) {
       throw ErrorOwn('JWT_SECRET o JWT_ALGORITHMS no estan definidas')
     }
