@@ -8,6 +8,7 @@ import { User } from '../models'
 import bcrypt from 'bcrypt'
 import jwt, { Algorithm } from 'jsonwebtoken'
 import { ErrorOwn, sendMail, uploadAvatars } from '../utils'
+import { Op } from 'sequelize'
 
 const { JWT_SECRET, JWT_ALGORITHMS, JWT_EXPIRESIN } = process.env
 
@@ -16,6 +17,19 @@ export const registerUsersService = async (userData: RegisterUsersType) => {
 
   if (!user_name || !full_name || !email || !password || !dt_birthdate)
     throw ErrorOwn('Faltan datos')
+
+  try {
+    // Verifica si el usuario ya existe
+    const existingUser = await User.findOne({
+      where: {
+        [Op.or]: [{ email: email }, { user_name: user_name }]
+      }
+    })
+
+    if (existingUser) throw ErrorOwn()
+  } catch (error) {
+    throw ErrorOwn('El usuario ya existe')
+  }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -48,7 +62,7 @@ export const loginUserService = async (userData: LoginUserType) => {
 
     if (!validPassword || !user) throw ErrorOwn()
 
-      console.log("user",user)
+    console.log('user', user)
 
     const userToken = user.dataValues
 
@@ -156,5 +170,29 @@ export const getDataTokenService = (token: string) => {
     return dataDecoded
   } catch (error) {
     throw ErrorOwn('Token invalido o expirado')
+  }
+}
+
+export const getAllUserService = async () => {
+  try {
+    const user = await User.findAll({
+      attributes: [
+        'id_user',
+        'full_name',
+        'email',
+        'last_login',
+        'avatar',
+        'role',
+        'id_gender'
+      ]
+    })
+
+    if (!user) {
+      throw ErrorOwn()
+    }
+
+    return user
+  } catch (error) {
+    throw ErrorOwn(`Error al buscar el usuario`)
   }
 }

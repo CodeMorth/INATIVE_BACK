@@ -41,10 +41,6 @@ export const initModels = () => {
     foreignKey: 'id_objective'
   })
 
-  // User and Chat association through user_x_chat
-  User.belongsToMany(Chat, { through: UserXChat, foreignKey: 'id_user' })
-  Chat.belongsToMany(User, { through: UserXChat, foreignKey: 'id_chat' })
-
   // EnglishLevel and User association through english_level_x_user
   EnglishLevel.belongsToMany(User, {
     through: EnglishlevelXUser,
@@ -63,16 +59,33 @@ export const initModels = () => {
   Gender.belongsToMany(Chat, { through: GenderXChat, foreignKey: 'id_gender' })
   Chat.belongsToMany(Gender, { through: GenderXChat, foreignKey: 'id_chat' })
 
-  // Message and Chat association through message_x_chat
-  Message.belongsToMany(Chat, {
-    through: MessageXChat,
-    foreignKey: 'id_message'
-  })
-  Chat.belongsToMany(Message, { through: MessageXChat, foreignKey: 'id_chat' })
-
   // User and Message association through user_x_message
   // Un usuario puede enviar muchos mensajes
   User.hasMany(Message, { foreignKey: 'id_sender_message' })
   // Un mensaje tiene un único remitente (usuario)
   Message.belongsTo(User, { foreignKey: 'id_sender_message' })
+
+  /*-----------------------UserXChat Special-----------------------*/
+
+  // User and Chat association through user_x_chat
+
+  UserXChat.belongsTo(User, { foreignKey: 'id_user' })
+  UserXChat.belongsTo(Chat, { foreignKey: 'id_chat' })
+
+  User.hasMany(UserXChat, { foreignKey: 'id_user' })
+  Chat.hasMany(UserXChat, { foreignKey: 'id_chat' })
+
+  /*-----------------------UserXChat Special-----------------------*/
+
+  /*-----------------------MessageXChat Special-----------------------*/
+
+  // Message and Chat association through message_x_chat
+
+  MessageXChat.belongsTo(Message, { foreignKey: 'id_message' })
+  MessageXChat.belongsTo(Chat, { foreignKey: 'id_chat' })
+
+  Message.hasMany(MessageXChat, { foreignKey: 'id_message' })
+  Chat.hasMany(MessageXChat, { foreignKey: 'id_chat' })
+
+  /*-----------------------MessageXChat Special-----------------------*/
 }

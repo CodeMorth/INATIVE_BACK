@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import {
   deleteUsersService,
+  getAllUserService,
   getDataTokenService,
   getUsersService,
   loginUserService,
@@ -95,6 +96,22 @@ export const getUserByTokenController = async (
 
   try {
     const response = await getDataTokenService(token)
+
+    res.status(201).json(response)
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const getAllUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+  try {
+    const response = await getAllUserService()
 
     res.status(201).json(response)
   } catch (error) {

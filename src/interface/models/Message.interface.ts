@@ -28,5 +28,5 @@ export class MessageType
 export interface MessageDataType {
   message: string
   id_sender_message: number
-  chatId: number
+  id_chat: number
 }

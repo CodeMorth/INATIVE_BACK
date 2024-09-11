@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   deleteUserController,
+  getAllUserController,
   getUserByTokenController,
   getUserController,
   loginUserController,
@@ -23,3 +24,4 @@ UserRouter.put(
 UserRouter.get('/getUser/:id_user',authenticate,getUserController)
 UserRouter.delete('/deleteUser/:id_user',authenticate, deleteUserController)
 UserRouter.get('/getUserByToken/:token', getUserByTokenController)
+UserRouter.get("/getAllUser",authenticate,getAllUserController)

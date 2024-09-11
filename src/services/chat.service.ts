@@ -1,7 +1,50 @@
 import InnativeDB from '../config/database'
 import { ChatDataType } from '../interface/models/Chat.interface'
-import { Chat, UserXChat } from '../models'
+import { Chat, Message, MessageXChat, User, UserXChat } from '../models'
 import { ErrorOwn } from '../utils/ErrorOwn'
+
+export const getChatsByUserIdService = async (id_user: string) => {
+  if (!id_user) throw new Error('Faltan datos')
+
+  try {
+    const chatsWithLastMessage = await Chat.findAll({
+      include: [
+        {
+          model: UserXChat,
+          where: { id_user }, // Verificamos que id_user pertenezca a UserXChat
+          attributes: ['id_user']
+        },
+        {
+          model: MessageXChat,
+          include: [
+            {
+              model: Message,
+              attributes: ['id_message', 'message', 'createdAt'],
+              include: [
+                {
+                  model: User,
+                  attributes: ['id_user', 'user_name', 'full_name']
+                }
+              ]
+            }
+          ],
+          limit: 1
+        }
+      ]
+    })
+
+    if (!chatsWithLastMessage) {
+      throw new Error('No se encontraron chats para este usuario')
+    }
+
+    console.log("chatsWithLastMessage",chatsWithLastMessage)
+
+    return chatsWithLastMessage
+  } catch (error) {
+    console.error(error)
+    throw new Error('Hubo un problema al obtener los chats del usuario')
+  }
+}
 
 export const createChatService = async (chatData: ChatDataType) => {
   const transaction = await InnativeDB.transaction()
