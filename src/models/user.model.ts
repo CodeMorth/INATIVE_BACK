@@ -1,8 +1,7 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
-import { Gender } from './gender.model'
 
-export const User = InnativeDB.define('user', {
+export const User = InnativeDB.define<any>('user', {
   id_user: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -38,16 +37,29 @@ export const User = InnativeDB.define('user', {
     allowNull: false,
     defaultValue: 'client'
   },
-  id_gender: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    references: {
-      model: Gender,
-      key: 'id_gender'
-    }
-  },
   avatar: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  english_level: {
+    type: DataTypes.ENUM,
+    values: ['1', '2', '3', '4'],
+    allowNull: true
+  },
+  range_age: {
+    type: DataTypes.ENUM,
+    values: ['18-25', '26-35', '36-45', '46-60'],
+    allowNull: true
+  },
+  gender: {
+    type: DataTypes.ENUM,
+    values: ['Male', 'Female', 'Non-binary', 'Prefer not to say'],
+    allowNull: true
+  },
+  objetives: {
+    type: DataTypes.ENUM,
+    values: ['Study', 'Hobby', 'Professional', 'Other'],
+    allowNull: true
+
   }
 })

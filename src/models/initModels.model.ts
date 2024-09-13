@@ -1,19 +1,13 @@
 import {
   Chat,
-  EnglishLevel,
-  EnglishlevelXUser,
   Friend,
-  Gender,
-  GenderXChat,
   Language,
   Message,
   MessageXChat,
-  Objective,
   User,
   UserXChat,
   UserXFriend,
-  UserxLanguage,
-  UserXObjective
+  UserxLanguage
 } from '.'
 
 export const initModels = () => {
@@ -30,34 +24,6 @@ export const initModels = () => {
     through: UserxLanguage,
     foreignKey: 'id_language'
   })
-
-  // User and Objective association through user_x_objectives
-  User.belongsToMany(Objective, {
-    through: UserXObjective,
-    foreignKey: 'id_user'
-  })
-  Objective.belongsToMany(User, {
-    through: UserXObjective,
-    foreignKey: 'id_objective'
-  })
-
-  // EnglishLevel and User association through english_level_x_user
-  EnglishLevel.belongsToMany(User, {
-    through: EnglishlevelXUser,
-    foreignKey: 'id_english_level'
-  })
-  User.belongsToMany(EnglishLevel, {
-    through: EnglishlevelXUser,
-    foreignKey: 'id_user'
-  })
-
-  // Gender and User association through gender_x_user
-  User.belongsTo(Gender, { foreignKey: 'id_gender' })
-  Gender.hasMany(User, { foreignKey: 'id_gender' })
-
-  // Gender and Chat association through gender_x_chat
-  Gender.belongsToMany(Chat, { through: GenderXChat, foreignKey: 'id_gender' })
-  Chat.belongsToMany(Gender, { through: GenderXChat, foreignKey: 'id_chat' })
 
   // User and Message association through user_x_message
   // Un usuario puede enviar muchos mensajes

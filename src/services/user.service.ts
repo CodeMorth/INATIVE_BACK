@@ -4,7 +4,7 @@ import {
   UpdateUserType
 } from '../interface/variety'
 import { MulterFile, MulterFiles } from '../interface/variety/upload_interface'
-import { User } from '../models'
+import { Language, User, UserxLanguage } from '../models'
 import bcrypt from 'bcrypt'
 import jwt, { Algorithm } from 'jsonwebtoken'
 import { ErrorOwn, sendMail, uploadAvatars } from '../utils'
@@ -26,15 +26,17 @@ export const registerUsersService = async (userData: RegisterUsersType) => {
       }
     })
 
-    if (existingUser) throw ErrorOwn()
+    if (existingUser) throw ErrorOwn('El usuario ya existe')
   } catch (error) {
     throw ErrorOwn('El usuario ya existe')
   }
 
   try {
+    // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    await User.create({
+    // Crear el usuario
+    const newUser = await User.create({
       user_name: user_name,
       full_name: full_name,
       email: email,
@@ -42,9 +44,31 @@ export const registerUsersService = async (userData: RegisterUsersType) => {
       dt_birthdate: dt_birthdate
     })
 
+    // Buscar los lenguajes "English" y "Spanish"
+    const languages = await Language.findAll({
+      where: {
+        name_language: ['English', 'Spanish']
+      }
+    })
+
+    if (languages.length === 0) {
+      throw ErrorOwn('No se encontraron los lenguajes especificados')
+    }
+
+    // Crear las asociaciones en la tabla pivote manualmente
+    for (const language of languages) {
+      await UserxLanguage.create({
+        id_user: newUser.id_user, // Ajusta esto si tu campo clave primaria tiene otro nombre
+        id_language: language.id_language
+      })
+    }
+
+    // Enviar correo de bienvenida
     await sendMail(email, `Bienvenido a Inative`, user_name)
 
-    return { message: 'Usuario creado correctamente' }
+    return {
+      message: 'Usuario creado correctamente'
+    }
   } catch (error) {
     throw ErrorOwn('No se pudo crear el usuario')
   }

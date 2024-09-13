@@ -1,4 +1,4 @@
-import { MulterFile, MulterFiles } from '../interface/variety/upload_interface';
+import { MulterFile } from '../interface/variety/upload_interface';
 import { CloudinaryResponsesType } from '../interface/variety/cloudinaryResponseInterface';
 import cloudinary from './cloudynari';
 

@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import InnativeDB from '../config/database'
 
-export const Language = InnativeDB.define('language', {
+export const Language = InnativeDB.define<any>('language', {
     id_language: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
