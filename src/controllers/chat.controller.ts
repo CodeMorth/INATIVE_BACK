@@ -22,8 +22,6 @@ export const getChatsByUserIdController = async (
 
   const {id_user}= req.params
 
-  console.log("Soy el id_user",id_user)
-
   try {
     const response = await getChatsByUserIdService(id_user)
     res.status(201).json(response)

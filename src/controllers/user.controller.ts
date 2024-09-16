@@ -5,6 +5,7 @@ import {
   getDataTokenService,
   getUsersService,
   loginUserService,
+  logoutUserService,
   registerUsersService,
   updateUserService
 } from '../services'
@@ -15,8 +16,7 @@ export const registerUserController = async (
   next: NextFunction
 ) => {
   try {
-
-    const response =  await registerUsersService(req.body)
+    const response = await registerUsersService(req.body)
 
     res.status(201).json(response)
   } catch (error) {
@@ -35,7 +35,27 @@ export const loginUserController = async (
     res.status(201).json(response)
   } catch (error) {
     next(error)
+  }
+}
 
+export const logoutUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Casting explícito para indicarle a TypeScript que `req.headers.authorization` es una cadena o undefined
+  const authHeader =
+    (req.headers['authorization'] as string | undefined) ?? 'unauthorized'
+
+  // Extraer el token del encabezado Authorization (Bearer token)
+  const token = authHeader.split(' ')[1] // "Bearer <token>"
+
+  try {
+    const response = await logoutUserService(token)
+
+    res.status(201).json(response)
+  } catch (error) {
+    next(error)
   }
 }
 
@@ -103,13 +123,11 @@ export const getUserByTokenController = async (
   }
 }
 
-
 export const getAllUserController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-
   try {
     const response = await getAllUserService()
 

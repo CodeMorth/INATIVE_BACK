@@ -37,11 +37,11 @@ export const registerUsersService = async (userData: RegisterUsersType) => {
 
     // Crear el usuario
     const newUser = await User.create({
-      user_name: user_name,
-      full_name: full_name,
-      email: email,
+      user_name,
+      full_name,
+      email,
       password: hashedPassword,
-      dt_birthdate: dt_birthdate
+      dt_birthdate
     })
 
     // Buscar los lenguajes "English" y "Spanish"
@@ -86,8 +86,6 @@ export const loginUserService = async (userData: LoginUserType) => {
 
     if (!validPassword || !user) throw ErrorOwn()
 
-    console.log('user', user)
-
     const userToken = user.dataValues
 
     delete userToken.password
@@ -104,9 +102,34 @@ export const loginUserService = async (userData: LoginUserType) => {
       }
     )
 
+    await User.update({ status: 'connected' }, { where: { email: email } })
+
     return { token: token }
   } catch (error) {
     throw ErrorOwn('No se pudo logear de manera correcta')
+  }
+}
+
+export const logoutUserService = async (token: any) => {
+  if (!token) throw ErrorOwn('Falta el token')
+
+  try {
+    if (!JWT_SECRET || !JWT_ALGORITHMS) {
+      throw ErrorOwn()
+    }
+
+    const dataToken: any = jwt.verify(token, JWT_SECRET, {
+      algorithms: JWT_ALGORITHMS.split(',') as Algorithm[]
+    })
+
+    await User.update(
+      { status: 'disconnected' },
+      { where: { email: dataToken.userToken.email } }
+    )
+
+    return { message: 'Sesión cerrada de manera correcta' }
+  } catch (error) {
+    throw ErrorOwn('No se pudo cerrar sesión de manera correcta')
   }
 }
 
@@ -182,7 +205,7 @@ export const getDataTokenService = (token: string) => {
 
   try {
     if (!JWT_SECRET || !JWT_ALGORITHMS) {
-      throw ErrorOwn('JWT_SECRET o JWT_ALGORITHMS no estan definidas')
+      throw ErrorOwn()
     }
 
     const dataDecoded: any = jwt.verify(token, JWT_SECRET, {
@@ -199,16 +222,8 @@ export const getDataTokenService = (token: string) => {
 
 export const getAllUserService = async () => {
   try {
-    const user = await User.findAll({
-      attributes: [
-        'id_user',
-        'full_name',
-        'email',
-        'last_login',
-        'avatar',
-        'role',
-        'id_gender'
-      ]
+    const user: any = await User.findAll({
+      attributes: { exclude: ['password'] } // Excluye el campo 'password'
     })
 
     if (!user) {

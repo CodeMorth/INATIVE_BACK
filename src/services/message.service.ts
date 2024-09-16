@@ -33,7 +33,7 @@ export const createMessageService = async (messageData: MessageDataType) => {
     // Confirmar la transacción
     await transaction.commit()
 
-    return newMessage
+    return {message:"Mensaje creado correctamente"}
   } catch (error) {
     // Revertir la transacción en caso de error
     await transaction.rollback()

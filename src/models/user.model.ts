@@ -60,6 +60,9 @@ export const User = InnativeDB.define<any>('user', {
     type: DataTypes.ENUM,
     values: ['Study', 'Hobby', 'Professional', 'Other'],
     allowNull: true
-
+  },
+  status: {
+    type: DataTypes.ENUM,
+    values: ['connected', 'disconnected']
   }
 })

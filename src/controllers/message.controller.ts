@@ -6,9 +6,9 @@ export const createMessageController = async (
   next: NextFunction
 ) => {
   try {
-    await createMessageService(req.body)
+    const response = await createMessageService(req.body)
 
-    res.status(201).json()
+    res.status(201).json(response)
   } catch (error) {
     next(error)
   }

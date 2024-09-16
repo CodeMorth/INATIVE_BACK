@@ -36,9 +36,6 @@ export const getChatsByUserIdService = async (id_user: string) => {
     if (!chatsWithLastMessage) {
       throw new Error('No se encontraron chats para este usuario')
     }
-
-    console.log("chatsWithLastMessage",chatsWithLastMessage)
-
     return chatsWithLastMessage
   } catch (error) {
     console.error(error)
