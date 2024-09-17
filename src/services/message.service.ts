@@ -33,7 +33,7 @@ export const createMessageService = async (messageData: MessageDataType) => {
     // Confirmar la transacción
     await transaction.commit()
 
-    return {message:"Mensaje creado correctamente"}
+    return { message: 'Mensaje creado correctamente' }
   } catch (error) {
     // Revertir la transacción en caso de error
     await transaction.rollback()
@@ -55,7 +55,13 @@ export const getMessagesByChatIdService = async (id_chat: string | number) => {
               include: [
                 {
                   model: User, // Incluir el usuario que envió el mensaje
-                  attributes: ['id_user', 'user_name', 'full_name']
+                  attributes: [
+                    'id_user',
+                    'user_name',
+                    'full_name',
+                    'avatar',
+                    'status'
+                  ]
                 }
               ]
             }
