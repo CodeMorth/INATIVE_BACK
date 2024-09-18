@@ -58,9 +58,7 @@ export const getMessagesByChatIdService = async (id_chat: string | number) => {
                   attributes: [
                     'id_user',
                     'user_name',
-                    'full_name',
-                    'avatar',
-                    'status'
+                    'full_name'
                   ]
                 }
               ]

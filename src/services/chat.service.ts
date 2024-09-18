@@ -23,7 +23,13 @@ export const getChatsByUserIdService = async (id_user: string) => {
               include: [
                 {
                   model: User,
-                  attributes: ['id_user', 'user_name', 'full_name']
+                  attributes: [
+                    'id_user',
+                    'user_name',
+                    'full_name',
+                    'avatar',
+                    'status'
+                  ]
                 }
               ]
             }
