@@ -19,7 +19,14 @@ export const messageSocketController = (io: Server, socket: CustomSocket) => {
     socket.join(id_chat) // Unir al socket a la sala del chat
     console.log(`Usuario unido a la sala del chat: ${id_chat}`)
 
+    const token = socket.handshake.auth.token
+    if (!token) {
+      return handleError(ErrorOwn('No hay token'), 'message')
+    }
+
     try {
+      const dataToken = await decodeToken(token)
+
       const messagesChat: any = await getMessagesByChatIdService(id_chat)
 
       if (!messagesChat || !messagesChat.dataValues) {
@@ -29,8 +36,13 @@ export const messageSocketController = (io: Server, socket: CustomSocket) => {
         )
       }
 
+      const dataEmit = {
+        data: messagesChat.dataValues.message_x_chats,
+        id_user: dataToken.id_user
+      }
+
       // Emitir solo a la sala correspondiente
-      socket.emit('message', messagesChat.dataValues.message_x_chats)
+      socket.emit('message', dataEmit)
     } catch (error) {
       handleError(error, 'joinChat')
     }
@@ -40,7 +52,6 @@ export const messageSocketController = (io: Server, socket: CustomSocket) => {
   socket.on(
     'message',
     async ({ id_chat, message }: DataCreateMessageSocket) => {
-      
       if (!id_chat || !message) {
         return handleError(ErrorOwn('Faltan datos'), 'message')
       }
